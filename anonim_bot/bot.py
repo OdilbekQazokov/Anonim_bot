@@ -21,16 +21,16 @@ def escape_markdown_v2(text: str) -> str:
 @dp.message_handler(commands=['start'])
 async def start_command(message: Message):
     """Foydalanuvchi /start bosganda chiqadigan xabar"""
-    await message.answer("Xush kelibsiz! Xabar jo‘natishingiz mumkin.")
+    await message.answer("Xush kelibsiz!\nXabar jo‘natishingiz mumkin.")
 
 @dp.message_handler()
 async def forward_to_group(message: Message):
-    """Foydalanuvchidan kelgan xabarni botning guruhga yuborishi"""
-    log_message = f"Message: {message.text}\n\nProfile name: {message.from_user.full_name}\nUsername:  @{message.from_user.username if message.from_user.username else 'Mavjud emas'}\nUser ID: {message.from_user.id}"
-    safe_message = escape_markdown_v2(log_message)
-    await bot.send_message(GROUP_ID, safe_message, parse_mode="MarkdownV2")
+    """Faqat botga shaxsiy chatdan kelgan xabarlarni guruhga yuboradi"""
+    if message.chat.type == "private":  # Faqat shaxsiy chatlarni tekshiramiz
+        log_message = f"Message: {message.text}\n\nProfile name: {message.from_user.full_name}\nUsername:  @{message.from_user.username if message.from_user.username else 'Mavjud emas'}\nUser ID: {message.from_user.id}"
+        safe_message = escape_markdown_v2(log_message)
+        await bot.send_message(GROUP_ID, safe_message, parse_mode="MarkdownV2")
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
-
 
